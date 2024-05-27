@@ -10,13 +10,16 @@ import {
   Grid,
   Link,
   CssBaseline,
+  Alert,
 } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import axios from 'axios';
 
 const Login: React.FC = () => {
-  // State for username and password
+  // State for username, password & error msg
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
 
   // Event handlers
   const handleUsername = (e: ChangeEvent<HTMLInputElement>) => {
@@ -29,17 +32,44 @@ const Login: React.FC = () => {
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  // Handle form submission
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Username:', username);
-    console.log('Password:', password);
-    // Check if username and password match
-    if (username === 'test' && password === 'test') {
-      // If matched, navigate to dashboard
-      navigate('/dashboard');
-    } else {
-      // If not matched, display error message
-      alert('Invalid username or password. Please try again.');
+    setError(null);
+
+    try {
+      // Fetch the first 10 users with their username and password
+      const response = await axios.get('https://dummyjson.com/users', {
+        params: {
+          limit: 10,
+          select: 'username,password',
+        },
+      });
+      const users = response.data.users;
+
+      console.log('ENTERED Username: ', username);
+      console.log('ENTERED Password: ', password);
+      console.log(users);
+
+      // Check if username and password entered matches a user
+      // eg. username: emilys password: emilyspass
+      const user = users.find(
+        (user: { username: string; password: string }) =>
+          user.username === username && user.password === password
+      );
+
+      // If a matching user is found, navigate to the dashboard
+      if (user) {
+        navigate('/dashboard');
+      } else {
+        // If no matching user is found, display error message and reset input fields
+        setError('Invalid username or password. Please try again.');
+        setUsername('');
+        setPassword('');
+      }
+    } catch (err) {
+      console.error('Failed to fetch users:', err);
+      setError('An error occurred. Please try again later.');
     }
   };
 
@@ -85,6 +115,12 @@ const Login: React.FC = () => {
             value={password}
             onChange={handlePassword}
           />
+          {error ? (
+            <Alert severity="error" sx={{ mt: 2 }}>
+              {error}
+            </Alert>
+          ) : null}
+
           <Button
             type="submit"
             fullWidth
