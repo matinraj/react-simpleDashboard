@@ -20,6 +20,7 @@ The project will run on http://localhost:3000
 
 ## Log In
 
+Use one of the following to log in to the dashboard.  
 Example of first 10 username & password from https://dummyjson.com/users
 
 {id: 1, username: 'emilys', password: 'emilyspass'}  
@@ -32,3 +33,7 @@ Example of first 10 username & password from https://dummyjson.com/users
 {id: 8, username: 'avat', password: 'avatpass'}  
 {id: 9, username: 'ethanm', password: 'ethanmpass'}  
 {id: 10, username: 'isabellad', password: 'isabelladpass'}
+
+## Dashboard
+
+Fetches 20 posts from https://jsonplaceholder.typicode.com/posts and displays them in a table
