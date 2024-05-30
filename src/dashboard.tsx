@@ -12,6 +12,7 @@ import {
   TableRow,
   Paper,
   TableContainer,
+  CircularProgress,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 
@@ -28,6 +29,8 @@ const Dashboard: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   // State for storing any error messages
   const [error, setError] = useState<string | null>(null);
+  // State for progress indicator while data is being fetched
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     axios
@@ -36,8 +39,14 @@ const Dashboard: React.FC = () => {
           _limit: 20, // GET 20 posts from the API
         },
       })
-      .then((response) => setPosts(response.data)) // Update posts state
-      .catch((error) => setError(error.message));
+      .then((response) => {
+        setPosts(response.data); // Update posts state
+        setLoading(false); // Update loading to false when data is fetched
+      })
+      .catch((error) => {
+        setError(error.message);
+        setLoading(false); // Set loading to false if error
+      });
   }, []);
 
   return (
@@ -58,7 +67,12 @@ const Dashboard: React.FC = () => {
         <Typography variant="h4" textAlign={'center'} gutterBottom>
           User Posts
         </Typography>
-        {error ? (
+
+        {loading ? ( // CircularProgress while loading
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 10 }}>
+            <CircularProgress />
+          </Box>
+        ) : error ? (
           <Typography color="error">{error}</Typography>
         ) : (
           <TableContainer component={Paper}>
