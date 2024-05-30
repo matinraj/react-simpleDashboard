@@ -15,8 +15,12 @@ import {
   CssBaseline,
   Alert,
   TextField,
+  IconButton,
+  InputAdornment,
 } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 // Validation schema for input fields using Yup
 const schema = yup.object().shape({
@@ -54,10 +58,23 @@ const Login: React.FC = () => {
   });
 
   // State to handle error messages
-  const [error, setErrorMsg] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // State to handle password visibility
+  const [showPass, setShowPass] = useState(false);
 
   // Hook to navigate different pages
   const navigate = useNavigate();
+
+  // Function to handle toggle of password visibility
+  const handleClickShowPass = () => {
+    setShowPass((prevShowPass) => !prevShowPass);
+  };
+
+  // Function to override default selection behavior when clicking button
+  const handleMouseDownPass = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+  };
 
   // Function to handle form submission
   const onSubmit: SubmitHandler<FormInput> = async (data) => {
@@ -146,18 +163,32 @@ const Login: React.FC = () => {
                 margin="normal"
                 fullWidth
                 label="Password"
-                type="password"
+                type={showPass ? 'text' : 'password'}
                 error={!!errors.password}
                 helperText={errors.password ? errors.password.message : ''}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="password visibility button"
+                        onClick={handleClickShowPass}
+                        onMouseDown={handleMouseDownPass}
+                      >
+                        {showPass ? <Visibility /> : <VisibilityOff />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
             )}
           />
-          {/* Display error message if there is one */}
-          {error && (
+          {/* Display error message if any */}
+          {errorMsg ? (
             <Alert severity="error" sx={{ mt: 2 }}>
-              {error}
+              {errorMsg}
             </Alert>
-          )}
+          ) : null}
+
           <Button
             type="submit"
             fullWidth
