@@ -1,42 +1,66 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useForm, SubmitHandler, Controller } from 'react-hook-form';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 import {
   Container,
   Box,
   Avatar,
   Typography,
-  TextField,
   Button,
   Grid,
   Link,
   CssBaseline,
   Alert,
+  TextField,
 } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import axios from 'axios';
+
+// Validation schema for input fields using Yup
+const schema = yup.object().shape({
+  username: yup
+    .string()
+    .required('Username is required')
+    .min(3, 'Username must be at least 3 characters')
+    .max(20, 'Username must be less than 20 characters')
+    .matches(
+      /^[a-zA-Z0-9]*$/,
+      'Username must contain only alphanumeric characters'
+    ),
+  password: yup
+    .string()
+    .required('Password is required')
+    .min(3, 'Password must be at least 5 characters')
+    .max(20, 'Password must be less than 20 characters'),
+});
+
+// Structure of Form Inputs
+interface FormInput {
+  username: string;
+  password: string;
+}
 
 const Login: React.FC = () => {
-  // State for username, password & error msg
-  const [username, setUsername] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [error, setError] = useState<string | null>(null);
+  // Initialize form handling
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<FormInput>({
+    resolver: yupResolver(schema),
+  });
 
-  // Event handlers
-  const handleUsername = (e: ChangeEvent<HTMLInputElement>) => {
-    setUsername(e.target.value);
-  };
+  // State to handle error messages
+  const [error, setErrorMsg] = useState<string | null>(null);
 
-  const handlePassword = (e: ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  };
-
+  // Hook to navigate different pages
   const navigate = useNavigate();
 
-  // Handle form submission
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError(null);
-
+  // Function to handle form submission
+  const onSubmit: SubmitHandler<FormInput> = async (data) => {
     try {
       // Fetch the first 10 users with their username and password
       const response = await axios.get('https://dummyjson.com/users', {
@@ -45,17 +69,19 @@ const Login: React.FC = () => {
           select: 'username,password',
         },
       });
+
       const users = response.data.users;
 
-      console.log('ENTERED Username: ', username);
-      console.log('ENTERED Password: ', password);
+      // Console Log Test
+      console.log('Username Entered', data.username);
+      console.log('Password Entered', data.password);
       console.log(users);
 
-      // Check if username and password entered matches a user
+      // Check if username and password entered matches a user from dummy api
       // eg. username: emilys password: emilyspass
       const user = users.find(
         (user: { username: string; password: string }) =>
-          user.username === username && user.password === password
+          user.username === data.username && user.password === data.password
       );
 
       // If a matching user is found, navigate to the dashboard
@@ -63,20 +89,19 @@ const Login: React.FC = () => {
         navigate('/dashboard');
       } else {
         // If no matching user is found, display error message and reset input fields
-        setError('Invalid username or password. Please try again.');
-        setUsername('');
-        setPassword('');
+        setErrorMsg('Invalid username or password. Please try again.');
+        reset();
       }
     } catch (err) {
+      // Handle errors that occur during the API request
       console.error('Failed to fetch users:', err);
-      setError('An error occurred. Please try again later.');
+      setErrorMsg('An error occurred. Please try again later.');
     }
   };
 
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
-
       <Box
         sx={{
           display: 'flex',
@@ -91,36 +116,48 @@ const Login: React.FC = () => {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="username"
-            label="Username"
+        <form onSubmit={handleSubmit(onSubmit)} noValidate>
+          {/* Controller for username input */}
+          <Controller
             name="username"
-            value={username}
-            onChange={handleUsername}
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <TextField
+                {...field}
+                variant="outlined"
+                margin="normal"
+                fullWidth
+                label="Username"
+                error={!!errors.username}
+                helperText={errors.username ? errors.username.message : ''}
+              />
+            )}
           />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
+          {/* Controller for password input */}
+          <Controller
             name="password"
-            label="Password"
-            type="password"
-            id="password"
-            value={password}
-            onChange={handlePassword}
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <TextField
+                {...field}
+                variant="outlined"
+                margin="normal"
+                fullWidth
+                label="Password"
+                type="password"
+                error={!!errors.password}
+                helperText={errors.password ? errors.password.message : ''}
+              />
+            )}
           />
-          {error ? (
+          {/* Display error message if there is one */}
+          {error && (
             <Alert severity="error" sx={{ mt: 2 }}>
               {error}
             </Alert>
-          ) : null}
-
+          )}
           <Button
             type="submit"
             fullWidth
@@ -141,7 +178,7 @@ const Login: React.FC = () => {
               </Link>
             </Grid>
           </Grid>
-        </Box>
+        </form>
       </Box>
     </Container>
   );
