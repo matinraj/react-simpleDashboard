@@ -204,7 +204,7 @@ const Login: React.FC = () => {
               </Link>
             </Grid>
             <Grid item>
-              <Link href="#" underline="hover" variant="body2">
+              <Link href="/signup" underline="hover" variant="body2">
                 Sign Up
               </Link>
             </Grid>
