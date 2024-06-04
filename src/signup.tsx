@@ -92,7 +92,7 @@ const Signup: React.FC = () => {
       console.log('Signup response:', response);
 
       // If signup is successful, navigate to login page
-      navigate('/');
+      navigate('/dashboard');
     } catch (err) {
       console.error('Failed to sign up:', err);
       setErrorMsg('An error occurred. Please try again later.');
