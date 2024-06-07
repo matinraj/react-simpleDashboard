@@ -22,6 +22,12 @@ import {
   CssBaseline,
   ListItemAvatar,
   ListItemButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Button,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
@@ -89,20 +95,34 @@ const App: React.FC = () => {
   // State for opening and closing side bar
   const [open, setOpen] = useState(false);
   const location = useLocation();
+  // State for opening logout dialog box
+  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
+
+  // Function to open dialog box
+  const handleLogoutDialogOpen = () => {
+    setLogoutDialogOpen(true);
+  };
+  // Function to close dialog box
+  const handleLogoutDialogClose = () => {
+    setLogoutDialogOpen(false);
+  };
+  // Function to confirm logout
+  const handleLogoutConfirm = () => {
+    setLogoutDialogOpen(false);
+    navigate('/');
+  };
+  // Function to handle logout
+  const handleLogout = () => {
+    handleLogoutDialogOpen();
+  };
 
   // Function to handle drawer open
   const handleDrawerOpen = () => {
     setOpen(true);
   };
-
   // Function to handle drawer close
   const handleDrawerClose = () => {
     setOpen(false);
-  };
-
-  // Function to handle logout
-  const handleLogout = () => {
-    navigate('/');
   };
 
   const isSelected = (path: string) => location.pathname === path;
@@ -243,6 +263,28 @@ const App: React.FC = () => {
           <Route path="/info" element={<InfoPage />} />
         </Routes>
       </Main>
+      {/* Logout Confirmation Dialog */}
+      <Dialog
+        open={logoutDialogOpen}
+        onClose={handleLogoutDialogClose}
+        aria-labelledby="logout-dialog-title"
+        aria-describedby="logout-dialog-description"
+      >
+        <DialogTitle id="logout-dialog-title">Logout Confirmation</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="logout-dialog-description">
+            Are you sure you want to logout?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleLogoutDialogClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleLogoutConfirm} color="primary">
+            Logout
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
