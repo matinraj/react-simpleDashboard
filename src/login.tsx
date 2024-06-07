@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
@@ -21,6 +21,7 @@ import {
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { useSnackbar } from 'notistack';
 
 // Validation schema for input fields using Yup
 const schema = yup.object().shape({
@@ -55,6 +56,21 @@ const Login: React.FC = () => {
     reset,
   } = useForm<FormInput>({
     resolver: yupResolver(schema),
+  });
+
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
+  // Permanent noti for valid username & password
+  useEffect(() => {
+    enqueueSnackbar('Valid USERNAME: emilys , PASSWORD: emilyspass', {
+      variant: 'info',
+      persist: true,
+      preventDuplicate: true,
+      anchorOrigin: {
+        vertical: 'top',
+        horizontal: 'left',
+      },
+    });
   });
 
   // State to handle error messages
@@ -103,6 +119,7 @@ const Login: React.FC = () => {
 
       // If a matching user is found, navigate to the dashboard
       if (user) {
+        closeSnackbar(); // close valid login info notification
         navigate('/dashboard');
       } else {
         // If no matching user is found, display error message and reset input fields

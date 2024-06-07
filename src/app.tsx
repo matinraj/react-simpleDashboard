@@ -37,6 +37,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import SettingsIcon from '@mui/icons-material/Settings';
 import InfoIcon from '@mui/icons-material/Info';
 import { styled, useTheme } from '@mui/material/styles';
+import { useSnackbar } from 'notistack';
 
 import Login from './login';
 import Signup from './signup';
@@ -97,6 +98,7 @@ const App: React.FC = () => {
   const location = useLocation();
   // State for opening logout dialog box
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
 
   // Function to open dialog box
   const handleLogoutDialogOpen = () => {
@@ -109,6 +111,16 @@ const App: React.FC = () => {
   // Function to confirm logout
   const handleLogoutConfirm = () => {
     setLogoutDialogOpen(false);
+    enqueueSnackbar('You have logged out', {
+      variant: 'success',
+      anchorOrigin: {
+        vertical: 'bottom',
+        horizontal: 'center',
+      },
+      style: {
+        backgroundColor: '#ff9800',
+      },
+    });
     navigate('/');
   };
   // Function to handle logout
