@@ -9,6 +9,11 @@ const initialState: AuthState = {
   isAuthenticated: false,
 };
 
+// const initialFunc = () => {
+//   console.log('Initialization');
+//   return initialState;
+// };
+
 // Define the action types
 type AuthActionTypes = { type: typeof LOGIN } | { type: typeof LOGOUT };
 

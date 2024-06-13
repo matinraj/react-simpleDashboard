@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Box, Toolbar, CssBaseline } from '@mui/material';
-
 import { useSnackbar } from 'notistack';
 
 import { useSelector, useDispatch } from 'react-redux';
@@ -83,6 +82,7 @@ const App: React.FC = () => {
           horizontal: 'center',
         },
       });
+
       navigate('/');
     }
   }, [isAuthenticated, isLoginPage, isSignUpPage, enqueueSnackbar, navigate]);
