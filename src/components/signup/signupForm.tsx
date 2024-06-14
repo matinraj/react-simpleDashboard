@@ -23,9 +23,10 @@ import {
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { useSnackbar } from 'notistack';
 
 import { useDispatch } from 'react-redux';
-import { login } from '../../redux/auth/authActions';
+import { justAuthenticated } from '../../redux/auth/authActions';
 import signupSchema from '../../validation/signupSchema';
 
 // Structure of Form Inputs
@@ -44,6 +45,8 @@ const SignupForm: React.FC = () => {
   } = useForm<FormInput>({
     resolver: yupResolver(signupSchema),
   });
+
+  const { enqueueSnackbar } = useSnackbar();
 
   // State to handle error messages
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -76,10 +79,19 @@ const SignupForm: React.FC = () => {
       });
 
       console.log('Signup response:', response);
-      dispatch(login()); // Dispatch login action to update authentication state
+      dispatch(justAuthenticated()); // Dispatch justAuthenticated action to update authentication state
 
       // If signup is successful, navigate to login page
       navigate('/dashboard');
+
+      // Welcome notificaiton
+      enqueueSnackbar('Welcome', {
+        variant: 'success',
+        anchorOrigin: {
+          vertical: 'bottom',
+          horizontal: 'center',
+        },
+      });
     } catch (err) {
       console.error('Failed to sign up:', err);
       setErrorMsg('An error occurred. Please try again later.');

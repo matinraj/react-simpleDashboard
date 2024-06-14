@@ -5,7 +5,7 @@ import { useSnackbar } from 'notistack';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from './redux/store';
-import { logout } from './redux/auth/authActions';
+import { login, logout } from './redux/auth/authActions';
 
 import Main from './styles/mainAreaStyle';
 import TopBar from './components/topBar';
@@ -15,6 +15,7 @@ import LogoutDialog from './components/logout';
 
 const App: React.FC = () => {
   const navigate = useNavigate();
+
   // State for opening and closing side bar
   const [open, setOpen] = useState(false);
   // State for opening logout dialog box
@@ -25,6 +26,10 @@ const App: React.FC = () => {
 
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated
+  );
+
+  const justAuthenticated = useSelector(
+    (state: RootState) => state.auth.justAuthenticated
   );
 
   // Function to open dialog box
@@ -66,16 +71,20 @@ const App: React.FC = () => {
     setOpen(false);
   };
 
-  console.log('isAuthenticated:', isAuthenticated);
+  // console.log('isAuthenticated:', isAuthenticated);
 
   // Check if the current location is the login or signup
   const isLoginPage = location.pathname === '/';
   const isSignUpPage = location.pathname === '/signup';
 
-  // Redirect to login page if not authenticated
   useEffect(() => {
-    if (!isAuthenticated && !isLoginPage && !isSignUpPage) {
-      enqueueSnackbar('Please log in', {
+    // if user has authenticated and tries to access login/signup page
+    if (
+      isAuthenticated &&
+      (isLoginPage || isSignUpPage) &&
+      !justAuthenticated
+    ) {
+      enqueueSnackbar('You have already logged in', {
         variant: 'error',
         anchorOrigin: {
           vertical: 'bottom',
@@ -83,9 +92,31 @@ const App: React.FC = () => {
         },
       });
 
+      navigate('/dashboard');
+    }
+    // if user just signed in and reached dashboard, change status to login
+    else if (justAuthenticated) {
+      dispatch(login());
+    }
+    // if user is not authenticated and tries to access pages other than login/signup
+    else if (!isAuthenticated && !isLoginPage && !isSignUpPage) {
+      enqueueSnackbar('Please log in', {
+        variant: 'error',
+        anchorOrigin: {
+          vertical: 'bottom',
+          horizontal: 'center',
+        },
+      });
       navigate('/');
     }
-  }, [isAuthenticated, isLoginPage, isSignUpPage, enqueueSnackbar, navigate]);
+  }, [
+    isAuthenticated,
+    isLoginPage,
+    isSignUpPage,
+    enqueueSnackbar,
+    navigate,
+    dispatch,
+  ]);
 
   return (
     <Box sx={{ display: 'flex' }}>

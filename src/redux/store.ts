@@ -1,15 +1,30 @@
 import { createStore, combineReducers } from 'redux';
 import authReducer from './auth/authReducer';
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+
+// Define the persist configuration
+const persistConfig = {
+  key: 'root',
+  storage,
+};
 
 // Combine reducers
 const rootReducer = combineReducers({
   auth: authReducer,
 });
 
-const store = createStore(rootReducer);
+// Create a persisted reducer
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+// Create store with persisted reducer
+const store = createStore(persistedReducer);
+
+// Create a persistor
+const persistor = persistStore(store);
 
 // Define RootState and AppDispatch types
 export type RootState = ReturnType<typeof rootReducer>;
 export type AppDispatch = typeof store.dispatch;
 
-export default store;
+export { store, persistor };

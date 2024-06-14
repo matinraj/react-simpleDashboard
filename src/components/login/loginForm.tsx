@@ -27,7 +27,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useSnackbar } from 'notistack';
 
 import { useDispatch } from 'react-redux';
-import { login } from '../../redux/auth/authActions';
+import { justAuthenticated } from '../../redux/auth/authActions';
 import loginSchema from '../../validation/loginSchema';
 
 // Structure of Form Inputs
@@ -108,8 +108,17 @@ const LoginForm: React.FC = () => {
       // If a matching user is found, navigate to the dashboard
       if (user) {
         closeSnackbar(); // close valid login info notification
-        dispatch(login()); // Dispatch login action to update authentication state
+        dispatch(justAuthenticated()); // Dispatch justAuthenticated action to update authentication state
         navigate('/dashboard');
+
+        // Welcome notification
+        enqueueSnackbar('Welcome', {
+          variant: 'success',
+          anchorOrigin: {
+            vertical: 'bottom',
+            horizontal: 'center',
+          },
+        });
       } else {
         // If no matching user is found, display error message and reset input fields
         setErrorMsg('Invalid username or password. Please try again.');
