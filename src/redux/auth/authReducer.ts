@@ -20,7 +20,7 @@ type AuthActionTypes =
   | { type: typeof JUST_AUTHENTICATED };
 
 // Auth reducer function to handle login and logout actions
-const authReducer: Reducer<AuthState, AuthActionTypes | any> = (
+const authReducer: Reducer<AuthState, AuthActionTypes> = (
   state = initialState,
   action: AuthActionTypes
 ): AuthState => {

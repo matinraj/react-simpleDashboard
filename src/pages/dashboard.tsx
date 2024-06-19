@@ -15,6 +15,10 @@ import {
   CircularProgress,
 } from '@mui/material';
 
+import { RootState } from '../redux/store';
+import { setPosts, fetchPostsFailed } from '../redux/posts/postActions';
+import { useDispatch, useSelector } from 'react-redux';
+
 // Structure of Post object
 interface Post {
   userId: number;
@@ -25,9 +29,9 @@ interface Post {
 
 const Dashboard: React.FC = () => {
   // State for storing the posts fetched from the API
-  const [posts, setPosts] = useState<Post[]>([]);
-  // State for storing any error messages
-  const [error, setError] = useState<string | null>(null);
+  // const [posts, setPosts] = useState<Post[]>([]);
+  // // State for storing any error messages
+  // const [error, setError] = useState<string | null>(null);
   // State for progress indicator while data is being fetched
   const [loading, setLoading] = useState<boolean>(true);
   // State for pagination
@@ -35,22 +39,30 @@ const Dashboard: React.FC = () => {
   // State of rows per page limit
   const [rowsPerPage, setRowsPerPage] = useState<number>(5);
 
+  const dispatch = useDispatch();
+  const posts = useSelector((state: RootState) => state.posts.posts);
+  const error = useSelector((state: RootState) => state.posts.error);
+
   useEffect(() => {
-    axios
-      .get('https://jsonplaceholder.typicode.com/posts', {
-        params: {
-          _limit: 55, // GET 55 posts from the API
-        },
-      })
-      .then((response) => {
-        setPosts(response.data); // Update posts state
-        setLoading(false); // Update loading to false when data is fetched
-      })
-      .catch((error) => {
-        setError(error.message);
-        setLoading(false); // Set loading to false if error
-      });
-  }, []);
+    if (posts.length === 0) {
+      axios
+        .get('https://jsonplaceholder.typicode.com/posts', {
+          params: {
+            _limit: 55,
+          },
+        })
+        .then((response) => {
+          dispatch(setPosts(response.data));
+          setLoading(false);
+        })
+        .catch((error) => {
+          dispatch(fetchPostsFailed(error.message));
+          setLoading(false);
+        });
+    } else {
+      setLoading(false);
+    }
+  }, [dispatch, posts.length]);
 
   // Function to handle page change
   const handleChangePage = (_: unknown, newPage: number) => {
