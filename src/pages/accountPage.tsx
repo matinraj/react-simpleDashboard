@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 
-const UserPage: React.FC = () => {
+const AccountPage: React.FC = () => {
   return (
     <Typography variant="h4" textAlign={'center'}>
       User Page
@@ -9,4 +9,4 @@ const UserPage: React.FC = () => {
   );
 };
 
-export default UserPage;
+export default AccountPage;

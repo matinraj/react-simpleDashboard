@@ -6,9 +6,10 @@ import { RootState } from '../redux/store';
 import Login from '../components/login/login';
 import Signup from '../components/signup/signup';
 import Dashboard from '../pages/dashboard';
-import UserPage from '../pages/userPage';
+import AccountPage from '../pages/accountPage';
 import SettingsPage from '../pages/settingsPage';
 import InfoPage from '../pages/infoPage';
+import UsersTable from '../pages/usersTable';
 
 const AppRoutes: React.FC = () => {
   const isAuthenticated = useSelector(
@@ -32,9 +33,10 @@ const AppRoutes: React.FC = () => {
     routes = (
       <Routes>
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/user" element={<UserPage />} />
+        <Route path="/account" element={<AccountPage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/info" element={<InfoPage />} />
+        <Route path="/users" element={<UsersTable />} />
         <Route
           path="*"
           element={<div> Not Found or You do not have permission.</div>}

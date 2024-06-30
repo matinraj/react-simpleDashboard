@@ -103,6 +103,17 @@ const SideDrawer: React.FC<SideDrawerProps> = ({
 
         <ListItemButton
           component={Link}
+          to="/users"
+          selected={isSelected('/users')}
+        >
+          <ListItemIcon>
+            <DashboardIcon />
+          </ListItemIcon>
+          <ListItemText primary="Users CRUD" />
+        </ListItemButton>
+
+        <ListItemButton
+          component={Link}
           to="/settings"
           selected={isSelected('/settings')}
         >

@@ -24,10 +24,6 @@ import {
   Button,
 } from '@mui/material';
 
-// import { RootState } from '../redux/store';
-// import { setPosts, fetchPostsFailed } from '../redux/posts/postActions';
-// import { useDispatch, useSelector } from 'react-redux';
-
 // Structure of Post object
 interface Post {
   userId: number;
@@ -51,15 +47,9 @@ const Dashboard: React.FC = () => {
   const [search, setSearch] = useState<string>('');
   // State for search history
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
-  // // State for fitered posts
-  // const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
 
   // Ref to store the previous search query
   const prevSearchRef = useRef<string>('');
-
-  // const dispatch = useDispatch();
-  // const posts = useSelector((state: RootState) => state.posts.posts);
-  // const error = useSelector((state: RootState) => state.posts.error);
 
   // Fetch posts data from API or local storage
   const fetchPosts = useCallback(async () => {
