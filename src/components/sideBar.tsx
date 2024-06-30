@@ -22,6 +22,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import SettingsIcon from '@mui/icons-material/Settings';
 import InfoIcon from '@mui/icons-material/Info';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 
 import drawerWidth from '../styles/drawerWidth';
 import { useTheme } from '@mui/material/styles';
@@ -79,15 +80,15 @@ const SideDrawer: React.FC<SideDrawerProps> = ({
         <Divider />
         <ListItemButton
           component={Link}
-          to="/user"
-          selected={isSelected('/user')}
+          to="/account"
+          selected={isSelected('/account')}
         >
           <ListItemAvatar>
             <Avatar sx={{ bgcolor: 'primary.main', width: 40, height: 40 }}>
               <AccountCircleIcon />
             </Avatar>
           </ListItemAvatar>
-          <ListItemText primary="User" />
+          <ListItemText primary="Account" />
         </ListItemButton>
         <Divider />
         <ListItemButton
@@ -107,7 +108,7 @@ const SideDrawer: React.FC<SideDrawerProps> = ({
           selected={isSelected('/users')}
         >
           <ListItemIcon>
-            <DashboardIcon />
+            <PeopleAltIcon />
           </ListItemIcon>
           <ListItemText primary="Users CRUD" />
         </ListItemButton>
