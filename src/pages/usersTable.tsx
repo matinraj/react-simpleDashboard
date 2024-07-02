@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import { Edit, Delete } from '@mui/icons-material';
 import { useSnackbar } from 'notistack';
-import UserForm, { User } from '../components/userForm'; 
+import UserForm, { User } from '../components/userForm';
 
 const UsersTable: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -30,11 +30,16 @@ const UsersTable: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
   const { enqueueSnackbar } = useSnackbar();
 
+  // Fetch users from the API
   useEffect(() => {
     axios
-      .get('https://jsonplaceholder.typicode.com/users')
+      .get('https://jsonplaceholder.typicode.com/users', {
+        params: {
+          _limit: 3, // limit for demo
+        },
+      })
       .then((response) => {
-        setUsers(response.data.slice(0, 3));
+        setUsers(response.data);
         setLoading(false);
       })
       .catch((error) => {
@@ -61,18 +66,18 @@ const UsersTable: React.FC = () => {
       if (selectedUser) {
         axios
           .put(
-            `https://jsonplaceholder.typicode.com/users/${selectedUser.id}`,
+            `https://jsonplaceholder.typicode.com/users/${selectedUser.id}`, 
             updatedUser
           )
           .then((response) => {
             setUsers((prevUsers) =>
-              prevUsers.map((user) =>
+              prevUsers.map((user) => 
                 user.id === selectedUser.id ? response.data : user
               )
             );
-            enqueueSnackbar('User updated successfully', {
-              variant: 'success',
-            }); // Show success alert
+            enqueueSnackbar('User updated successfully', { 
+              variant: 'success'
+             }); // Show success alert
             handleCloseEdit();
           })
           .catch((error) => {
@@ -92,7 +97,7 @@ const UsersTable: React.FC = () => {
   // Close the create dialog
   const handleCloseCreate = useCallback(() => {
     setOpen(false);
-    setSelectedUser(null); // Reset selectedUser
+    setSelectedUser(null); // Reset selectedUse
   }, []);
 
   // Save the new user data
@@ -101,13 +106,19 @@ const UsersTable: React.FC = () => {
       axios
         .post('https://jsonplaceholder.typicode.com/users', newUser)
         .then((response) => {
-          setUsers((prevUsers) => [...prevUsers, response.data]);
-          enqueueSnackbar('User created successfully', { variant: 'success' }); // Show success alert
+          setUsers((prevUsers) => {
+            const newUserWithUniqueId = {
+              ...response.data,
+              id: prevUsers.length ? Math.max(...prevUsers.map(user => user.id!)) + 1 : 1, // Check if prev user exists and +1 to highest ID
+            };
+            return [...prevUsers, newUserWithUniqueId];
+          });
+          enqueueSnackbar('User created successfully', { variant: 'success' });
           handleCloseCreate();
         })
         .catch((error) => {
           setError(error.message);
-          enqueueSnackbar('Error creating user', { variant: 'error' }); // Show error alert
+          enqueueSnackbar('Error creating user', { variant: 'error' });
         });
     },
     [enqueueSnackbar, handleCloseCreate]
@@ -130,8 +141,8 @@ const UsersTable: React.FC = () => {
     [enqueueSnackbar]
   );
 
-// Handle page change
-const handleChangePage = useCallback((_: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
+  // Handle page change
+  const handleChangePage = useCallback((_: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
     setPage(newPage);
   }, []);
 
@@ -145,15 +156,13 @@ const handleChangePage = useCallback((_: React.MouseEvent<HTMLButtonElement> | n
   // Handle rows per page change
   const handleChangeRowsPerPage = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      setRowsPerPage(parseInt(e.target.value, 10));
-      setPage(0);
-    },
-    []
-  );
+    setRowsPerPage(parseInt(e.target.value, 10));
+    setPage(0);
+  }, []);
 
   return (
     <React.Fragment>
-      <Toolbar />
+      <Toolbar/>
       <Typography variant="h4" textAlign={'center'} gutterBottom>
         Users
       </Typography>
@@ -187,30 +196,29 @@ const handleChangePage = useCallback((_: React.MouseEvent<HTMLButtonElement> | n
                 </TableRow>
               </TableHead>
               <TableBody>
-                {paginatedUsers
-                  .map((user, index) => (
-                    <TableRow key={user.id}>
-                      <TableCell>{index + 1}</TableCell>
-                      <TableCell>{user.name}</TableCell>
-                      <TableCell>{user.username}</TableCell>
-                      <TableCell>{user.email}</TableCell>
-                      <TableCell>{user.company.name}</TableCell>
-                      <TableCell>
-                        <IconButton
-                          style={{ color: 'blue' }}
-                          onClick={() => handleOpenEdit(user)}
-                        >
-                          <Edit />
-                        </IconButton>
-                        <IconButton
-                          style={{ color: 'red' }}
-                          onClick={() => handleDelete(user.id!)}
-                        >
-                          <Delete />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                {paginatedUsers.map((user, index) => (
+                  <TableRow key={user.id}>
+                    <TableCell>{page * rowsPerPage + index + 1}</TableCell> {/* Ensure consecutive numbering */}
+                    <TableCell>{user.name}</TableCell>
+                    <TableCell>{user.username}</TableCell>
+                    <TableCell>{user.email}</TableCell>
+                    <TableCell>{user.company.name}</TableCell>
+                    <TableCell>
+                      <IconButton
+                        style={{ color: 'blue' }}
+                        onClick={() => handleOpenEdit(user)}
+                      >
+                        <Edit />
+                      </IconButton>
+                      <IconButton
+                        style={{ color: 'red' }}
+                        onClick={() => handleDelete(user.id!)}
+                      >
+                        <Delete />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </TableContainer>
