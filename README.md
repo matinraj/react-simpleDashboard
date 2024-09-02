@@ -1,18 +1,31 @@
-# simpleDashboard
+## React simpleDashboard
 
-A simple login page and dashboard built using typescript, react hooks, axios and Material UI by fetching data from dummy APIs
+This is a personal project that extends my learning after taking a Udemy course on React Web Development, where i built and uploaded an interactive web-based code editor to NPMJS – [jsbook-jsnote](https://www.npmjs.com/package/jbook-jsnote)
+
+This website has a login page, sign up page, and a dashboard with CRUD operations built using typescript, react hooks, axios and Material UI by fetching data from dummy APIs.
+
+## Notable library usage
+
+- Material UI
+- Redux
+- React-Hook-Form
+- Axios
+- Yup schema for input validation
+- Notistack for alerts
+- React-router-dom
+- Redux-persist
 
 ## Installation
 
 Install necessary libraries
 
-```bash
+```plaintext
   npm install
 ```
 
 ## Run
 
-```bash
+```plaintext
   npm start
 ```
 
@@ -36,4 +49,6 @@ Example of first 10 username & password from https://dummyjson.com/users
 
 ## Dashboard
 
-Fetches 20 posts from https://jsonplaceholder.typicode.com/posts and displays them in a table
+Fetches 55 posts from https://jsonplaceholder.typicode.com/posts and displays them in a table with pagination.
+
+In the **Users CRUD** page, CRUD operations can be performed on table rows with appropriate HTTP request methods.
